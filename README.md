@@ -1,4 +1,4 @@
-# 🌶️ Bazarou — El tianguis digital de México
+# Bazarou — El tianguis digital de México
 
 > Compra, vende y regatea como en el mercado de toda la vida, pero con la seguridad de una plataforma moderna.
 
@@ -6,7 +6,7 @@ Bazarou es un marketplace al estilo de Vinted **diseñado para el mercado mexica
 
 ---
 
-## 🛠️ Stack tecnológico
+## Stack tecnológico
 
 | Capa            | Tecnología |
 |-----------------|------------|
@@ -21,7 +21,7 @@ Bazarou es un marketplace al estilo de Vinted **diseñado para el mercado mexica
 
 ---
 
-## ✨ Funcionalidades
+##  Funcionalidades
 
 - **Registro y login** con email/usuario y BCrypt
 - **Publicación de productos** con hasta 8 fotos, drag & drop, categorías, marca, talla, color, ciudad de envío
@@ -37,7 +37,7 @@ Bazarou es un marketplace al estilo de Vinted **diseñado para el mercado mexica
 
 ---
 
-## 🚀 Cómo correrlo (XAMPP — tu setup actual)
+##  Cómo correrlo (XAMPP — tu setup actual)
 
 ### 1) Prerrequisitos
 - **Java 17+** ([Adoptium](https://adoptium.net/))
@@ -67,7 +67,7 @@ Abre [http://localhost:8080](http://localhost:8080) 🎉
 
 ---
 
-## 🐳 Cómo correrlo con Docker
+##  Cómo correrlo con Docker
 
 ```bash
 docker-compose up --build
@@ -84,7 +84,7 @@ docker-compose down
 
 ---
 
-## 📂 Estructura del proyecto
+##  Estructura del proyecto
 
 ```
 bazarou/
@@ -140,7 +140,7 @@ bazarou/
 
 ---
 
-## 🔑 Rutas principales
+## Rutas principales
 
 | Ruta                            | Descripción                                       |
 |---------------------------------|---------------------------------------------------|
@@ -164,7 +164,7 @@ bazarou/
 
 ---
 
-## 🎨 Sistema de diseño
+##  Sistema de diseño
 
 | Token            | Valor         | Uso |
 |------------------|---------------|-----|
@@ -183,7 +183,7 @@ bazarou/
 
 ---
 
-## 🔮 Para conectar después (APIs)
+##  Para conectar después (APIs)
 
 Tu proyecto está pensado para integrar más adelante:
 
@@ -196,7 +196,7 @@ Las puertas están abiertas en `TransactionService` y `ProductService`.
 
 ---
 
-## 📌 Próximos pasos sugeridos
+##  Próximos pasos sugeridos
 
 - [ ] Sistema de mensajería interna entre comprador y vendedor
 - [ ] Reseñas con estrellas tras completar transacción
@@ -208,7 +208,7 @@ Las puertas están abiertas en `TransactionService` y `ProductService`.
 
 ---
 
-## 📝 Licencia
+##  Licencia
 
 Proyecto educativo. ¡Úsalo, modifícalo, vuélvelo tuyo!
 
