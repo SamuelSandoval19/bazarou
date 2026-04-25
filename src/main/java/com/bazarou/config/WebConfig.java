@@ -2,6 +2,7 @@ package com.bazarou.config;
 
 import com.bazarou.model.User;
 import com.bazarou.repository.UserRepository;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.Authentication;
@@ -11,17 +12,24 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
-/**
- * - Sirve la carpeta /uploads como recurso estático
- * - Inyecta el usuario logueado en todos los modelos de Thymeleaf
- */
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
     @Value("${bazarou.uploads.dir}")
     private String uploadsDir;
+
+    @PostConstruct
+    public void init() throws IOException {
+        Path p = Paths.get(uploadsDir);
+        if (!Files.exists(p)) {
+            Files.createDirectories(p);
+        }
+    }
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
