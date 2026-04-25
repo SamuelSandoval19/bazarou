@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{fragments/layout :: head-meta}"></th:block>
+    <title>Publicar producto — Bazarou</title>
+</head>
+<body>
+
+<div th:replace="~{fragments/layout :: navbar}"></div>
+
+<div class="publish-wrap">
+    <div class="publish-card">
+        <h1>Pon tu <em>puesto</em> 🌶️</h1>
+        <p class="lead">Sube algo que ya no uses, ponle precio y deja que el bazar haga lo suyo.</p>
+
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+
+        <form th:action="@{/vender}" method="post" enctype="multipart/form-data" th:object="${producto}">
+
+            <!-- IMÁGENES -->
+            <div class="form-group">
+                <label>Fotos del producto (máx. 8)</label>
+                <div class="upload-zone" id="upload-zone">
+                    <div class="icon-big">📸</div>
+                    <div class="title">Arrastra tus fotos aquí o haz click para seleccionar</div>
+                    <div class="sub">JPG, PNG o WebP · Hasta 10 MB cada una · La primera será la portada</div>
+                </div>
+                <input type="file" id="imagenes-input" name="imagenes" multiple accept="image/*" style="display:none;">
+                <div id="preview-grid" class="preview-grid"></div>
+            </div>
+
+            <!-- TÍTULO -->
+            <div class="form-group">
+                <label>Título *</label>
+                <input type="text" th:field="*{titulo}" placeholder="Ej. Chamarra de mezclilla Levi's talla M" maxlength="120" required>
+                <p class="error" th:if="${#fields.hasErrors('titulo')}" th:errors="*{titulo}"></p>
+            </div>
+
+            <!-- PRECIO + CATEGORÍA -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Precio (MXN) *</label>
+                    <input type="number" th:field="*{precio}" step="0.01" min="1" placeholder="0.00" required data-format="money">
+                    <p class="error" th:if="${#fields.hasErrors('precio')}" th:errors="*{precio}"></p>
+                </div>
+
+                <div class="form-group">
+                    <label>Categoría *</label>
+                    <select th:field="*{categoriaId}" required>
+                        <option value="">Elige una...</option>
+                        <option th:each="c : ${categorias}" th:value="${c.id}" th:text="${c.emoji} + ' ' + ${c.nombre}"></option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- ESTADO -->
+            <div class="form-group">
+                <label>Estado del producto *</label>
+                <select th:field="*{estado}" required>
+                    <option value="">Elige uno...</option>
+                    <option th:each="e : ${estados}" th:value="${e}" th:text="${e.label}"></option>
+                </select>
+            </div>
+
+            <!-- DESCRIPCIÓN -->
+            <div class="form-group">
+                <label>Descripción *</label>
+                <textarea th:field="*{descripcion}" placeholder="Cuéntale al comprador todo lo que necesita saber: medidas, materiales, detalles, motivo de venta..." maxlength="2000" required></textarea>
+                <p class="error" th:if="${#fields.hasErrors('descripcion')}" th:errors="*{descripcion}"></p>
+            </div>
+
+            <!-- DETALLES OPCIONALES -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Marca</label>
+                    <input type="text" th:field="*{marca}" placeholder="Ej. Nike, Apple, IKEA">
+                </div>
+                <div class="form-group">
+                    <label>Talla</label>
+                    <input type="text" th:field="*{talla}" placeholder="S, M, L, 28, 9.5...">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Color</label>
+                    <input type="text" th:field="*{color}" placeholder="Negro, rosa, azul...">
+                </div>
+                <div class="form-group">
+                    <label>Ciudad de envío</label>
+                    <input type="text" th:field="*{ciudadEnvio}" placeholder="Ej. CDMX, Monterrey, Guadalajara">
+                </div>
+            </div>
+
+            <!-- OPCIONES -->
+            <div class="form-group">
+                <label>Opciones</label>
+
+                <div class="toggle-row">
+                    <div class="info">
+                        <div class="title">💬 Aceptar ofertas (regateo)</div>
+                        <div class="sub">Los compradores pueden hacerte ofertas más bajas que tu precio publicado.</div>
+                    </div>
+                    <div class="switch on">
+                        <input type="checkbox" th:field="*{aceptaOfertas}" checked>
+                    </div>
+                </div>
+
+                <div class="toggle-row">
+                    <div class="info">
+                        <div class="title">🛡️ Compra protegida</div>
+                        <div class="sub">Bazarou retiene el pago hasta que el comprador confirme la entrega. Comisión: 5%.</div>
+                    </div>
+                    <div class="switch on">
+                        <input type="checkbox" th:field="*{compraProtegida}" checked>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-block" style="margin-top: 24px;">Publicar en el tianguis</button>
+
+            <p style="text-align: center; color: var(--gris); font-size: 13px; margin-top: 12px;">
+                Al publicar aceptas las reglas de la comunidad de Bazarou.
+            </p>
+        </form>
+    </div>
+</div>
+
+<div th:replace="~{fragments/layout :: footer}"></div>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

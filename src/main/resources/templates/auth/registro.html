@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{fragments/layout :: head-meta}"></th:block>
+    <title>Únete — Bazarou</title>
+</head>
+<body>
+
+<div th:replace="~{fragments/layout :: navbar}"></div>
+
+<div class="auth-page">
+    <aside class="auth-side">
+        <h2>Pásale al<br><em>bazar</em> chido.</h2>
+        <p>Regístrate gratis, publica lo que ya no usas y encuentra cosas únicas en todo México.</p>
+        <span class="firma">— ¿Le hace? 😉</span>
+    </aside>
+
+    <div class="auth-form-wrap">
+        <div class="auth-form">
+            <h1>Crear cuenta</h1>
+            <p class="sub">¿Ya tienes cuenta? <a href="/login" style="color: var(--rosa-mexicano); font-weight: 600;">Inicia sesión</a></p>
+
+            <div th:if="${error}" class="alert alert-error">
+                <span>⚠️</span><span th:text="${error}">Error</span>
+            </div>
+
+            <form th:action="@{/registro}" method="post" th:object="${registro}">
+
+                <div class="form-group">
+                    <label>Nombre de usuario *</label>
+                    <input type="text" th:field="*{username}" required minlength="3" maxlength="30" placeholder="ej. mariana_cdmx">
+                    <p class="error" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></p>
+                </div>
+
+                <div class="form-group">
+                    <label>Correo electrónico *</label>
+                    <input type="email" th:field="*{email}" required placeholder="tu@correo.com">
+                    <p class="error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></p>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Contraseña *</label>
+                        <input type="password" th:field="*{password}" required minlength="6" placeholder="••••••••">
+                        <p class="error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></p>
+                    </div>
+                    <div class="form-group">
+                        <label>Confirmar *</label>
+                        <input type="password" th:field="*{confirmPassword}" required placeholder="••••••••">
+                        <p class="error" th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}"></p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Nombre completo (opcional)</label>
+                    <input type="text" th:field="*{nombreCompleto}" placeholder="Mariana Pérez">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Ciudad</label>
+                        <input type="text" th:field="*{ciudad}" placeholder="CDMX, Monterrey...">
+                    </div>
+                    <div class="form-group">
+                        <label>Estado</label>
+                        <input type="text" th:field="*{estado}" placeholder="Ej. Jalisco">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-block">Crear cuenta</button>
+
+                <p class="auth-divider">Al registrarte aceptas nuestros <a href="#">términos</a> y <a href="#">privacidad</a>.</p>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

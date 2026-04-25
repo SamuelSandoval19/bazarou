@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <th:block th:replace="~{fragments/layout :: head-meta}"></th:block>
+    <title>Buscar — Bazarou</title>
+</head>
+<body>
+
+<div th:replace="~{fragments/layout :: navbar}"></div>
+
+<div class="list-wrap">
+
+    <div class="list-header">
+        <h1 th:if="${categoria != null}">
+            <span th:text="${categoria.emoji}">📦</span> <span th:text="${categoria.nombre}">Categoría</span>
+        </h1>
+        <h1 th:unless="${categoria != null}" th:text="${q != null and !q.isEmpty()} ? 'Resultados de: \'' + ${q} + '\'' : 'Todos los productos'">Productos</h1>
+
+        <form action="/buscar" method="get" style="display: flex; gap: 8px;">
+            <input type="hidden" name="q" th:value="${q}">
+            <select name="sort" class="sort-select" onchange="this.form.submit()">
+                <option value="recientes" th:selected="${sort == 'recientes'}">Más recientes</option>
+                <option value="precio_asc" th:selected="${sort == 'precio_asc'}">Precio: menor a mayor</option>
+                <option value="precio_desc" th:selected="${sort == 'precio_desc'}">Precio: mayor a menor</option>
+                <option value="populares" th:selected="${sort == 'populares'}">Más populares</option>
+            </select>
+        </form>
+    </div>
+
+    <div th:if="${productos.empty}" class="empty-state">
+        <div class="emoji">🔎</div>
+        <h3>Nada por aquí... todavía</h3>
+        <p>Prueba con otra búsqueda o explora otras categorías.</p>
+    </div>
+
+    <div th:unless="${productos.empty}" class="product-grid">
+        <article th:each="p : ${productos.content}" th:replace="~{products/list :: product-card(${p}, false)}"></article>
+    </div>
+
+    <div th:if="${productos.totalPages > 1}" style="display: flex; justify-content: center; gap: 8px; margin-top: 40px;">
+        <a th:if="${productos.number > 0}"
+           th:href="@{|/buscar?q=${q}&sort=${sort}&page=${productos.number - 1}|}"
+           class="btn-secondary" style="padding: 10px 20px; font-size: 14px;">← Anterior</a>
+        <span style="padding: 10px 20px; color: var(--gris); font-size: 14px;">
+            Página <strong th:text="${productos.number + 1}">1</strong> de <span th:text="${productos.totalPages}">1</span>
+        </span>
+        <a th:if="${productos.number + 1 < productos.totalPages}"
+           th:href="@{|/buscar?q=${q}&sort=${sort}&page=${productos.number + 1}|}"
+           class="btn-secondary" style="padding: 10px 20px; font-size: 14px;">Siguiente →</a>
+    </div>
+</div>
+
+<!-- Fragment de tarjeta de producto, reutilizable desde otras páginas -->
+<article th:fragment="product-card(p, full)" class="product-card">
+    <div class="product-image">
+        <span class="badge-protegida" th:if="${p.compraProtegida}">🛡️ Protegida</span>
+
+        <form th:if="${currentUser != null}" th:action="@{|/favoritos/toggle/${p.id}|}" method="post" style="display: contents;">
+            <button type="submit" class="fav-btn" title="Agregar a favoritos">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            </button>
+        </form>
+
+        <a th:href="@{|/producto/${p.id}|}">
+            <img th:if="${!p.imagenes.isEmpty()}" th:src="${p.imagenes[0]}" alt="">
+            <div th:if="${p.imagenes.isEmpty()}" style="display:flex; align-items:center; justify-content:center; height:100%; font-size:48px;">📦</div>
+        </a>
+    </div>
+    <a th:href="@{|/producto/${p.id}|}" class="product-info">
+        <div class="product-titulo" th:text="${p.titulo}">Título</div>
+        <div class="product-marca" th:if="${p.marca != null and !p.marca.isEmpty()}" th:text="${p.marca}">Marca</div>
+        <div class="product-precio">$<span th:text="${#numbers.formatDecimal(p.precio, 0, 'COMMA', 0, 'POINT')}">0</span></div>
+        <div class="product-precio-incluye" th:if="${p.aceptaOfertas}">💬 Acepta ofertas</div>
+        <div class="product-meta">
+            <span th:text="${p.estado.label}">Estado</span>
+            <span th:if="${p.ciudadEnvio != null and !p.ciudadEnvio.isEmpty()}" th:text="${p.ciudadEnvio}">Ciudad</span>
+        </div>
+    </a>
+</article>
+
+<div th:replace="~{fragments/layout :: footer}"></div>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

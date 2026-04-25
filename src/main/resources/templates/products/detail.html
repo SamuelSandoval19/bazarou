@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <th:block th:replace="~{fragments/layout :: head-meta}"></th:block>
+    <title th:text="${producto.titulo} + ' — Bazarou'">Producto</title>
+</head>
+<body>
+
+<div th:replace="~{fragments/layout :: navbar}"></div>
+
+<div class="detail-wrap">
+
+    <!-- GALERÍA -->
+    <div class="detail-gallery">
+        <div class="main-img">
+            <img th:if="${!producto.imagenes.isEmpty()}" th:src="${producto.imagenes[0]}" alt="">
+            <div th:if="${producto.imagenes.isEmpty()}" style="display:flex; align-items:center; justify-content:center; height:100%; font-size:96px;">📦</div>
+        </div>
+        <div class="thumbs" th:if="${producto.imagenes.size() > 1}">
+            <div th:each="img, iter : ${producto.imagenes}"
+                 th:if="${iter.index < 5}"
+                 th:class="${iter.index == 0 ? 'thumb active' : 'thumb'}">
+                <img th:src="${img}" alt="">
+            </div>
+        </div>
+    </div>
+
+    <!-- INFO -->
+    <div class="detail-info">
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+
+        <h1 th:text="${producto.titulo}">Título del producto</h1>
+        <p class="marca" th:if="${producto.marca != null and !producto.marca.isEmpty()}" th:text="${producto.marca}">Marca</p>
+
+        <div class="detail-tags">
+            <span class="tag" th:text="${producto.estado.label}">Estado</span>
+            <span class="tag tag-protegida" th:if="${producto.compraProtegida}">🛡️ Compra protegida</span>
+            <span class="tag tag-regateo" th:if="${producto.aceptaOfertas}">💬 Acepta regateo</span>
+            <span class="tag" th:if="${producto.disponibilidad.name() == 'RESERVADO'}" style="background:var(--cempasuchil-soft); color:#8B6500;">⏳ Reservado</span>
+            <span class="tag" th:if="${producto.disponibilidad.name() == 'VENDIDO'}" style="background:var(--gris-claro); color:var(--gris);">Vendido</span>
+        </div>
+
+        <div class="precio-grande">$<span th:text="${#numbers.formatDecimal(producto.precio, 0, 'COMMA', 2, 'POINT')}">0</span></div>
+        <div class="precio-extra" th:if="${producto.compraProtegida}">+ envío y comisión por protección · El vendedor recibe el dinero al confirmar entrega</div>
+
+        <div class="detail-actions" th:if="${!esPropio and producto.disponibilidad.name() == 'DISPONIBLE'}">
+            <th:block sec:authorize="isAuthenticated()">
+                <a th:href="@{|/compra/checkout/${producto.id}|}" class="btn-comprar">
+                    Comprar ahora · $<span th:text="${#numbers.formatDecimal(producto.precio, 0, 'COMMA', 2, 'POINT')}">0</span>
+                </a>
+                <button class="btn-regatear" th:if="${producto.aceptaOfertas}">
+                    💬 Hacer una oferta
+                </button>
+            </th:block>
+            <th:block sec:authorize="!isAuthenticated()">
+                <a href="/login" class="btn-comprar">Inicia sesión para comprar</a>
+            </th:block>
+        </div>
+
+        <div class="detail-actions" th:if="${esPropio}">
+            <p style="padding:16px; background: var(--cempasuchil-soft); border-radius: var(--radio-sm); font-size: 14px;">
+                Este es uno de tus productos. Puedes editarlo o ver las ofertas que recibiste.
+            </p>
+            <a href="/ofertas/recibidas" class="btn-secondary">Ver ofertas recibidas</a>
+        </div>
+
+        <!-- DESCRIPCIÓN -->
+        <div class="detail-section">
+            <h3>Descripción</h3>
+            <p th:text="${producto.descripcion}">Descripción</p>
+        </div>
+
+        <!-- ESPECIFICACIONES -->
+        <div class="detail-section">
+            <h3>Detalles</h3>
+            <div class="specs-grid">
+                <div class="spec-item" th:if="${producto.categoria != null}">
+                    <span class="key">Categoría</span>
+                    <span class="val" th:text="${producto.categoria.nombre}">--</span>
+                </div>
+                <div class="spec-item">
+                    <span class="key">Estado</span>
+                    <span class="val" th:text="${producto.estado.label}">--</span>
+                </div>
+                <div class="spec-item" th:if="${producto.marca != null and !producto.marca.isEmpty()}">
+                    <span class="key">Marca</span>
+                    <span class="val" th:text="${producto.marca}">--</span>
+                </div>
+                <div class="spec-item" th:if="${producto.talla != null and !producto.talla.isEmpty()}">
+                    <span class="key">Talla</span>
+                    <span class="val" th:text="${producto.talla}">--</span>
+                </div>
+                <div class="spec-item" th:if="${producto.color != null and !producto.color.isEmpty()}">
+                    <span class="key">Color</span>
+                    <span class="val" th:text="${producto.color}">--</span>
+                </div>
+                <div class="spec-item" th:if="${producto.ciudadEnvio != null}">
+                    <span class="key">Envío desde</span>
+                    <span class="val" th:text="${producto.ciudadEnvio}">--</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- VENDEDOR -->
+        <div class="detail-section">
+            <h3>Vendedor</h3>
+            <a th:href="@{|/perfil/${producto.vendedor.username}|}" class="vendedor-card">
+                <div class="vendedor-avatar" th:text="${#strings.toUpperCase(#strings.substring(producto.vendedor.username,0,1))}">B</div>
+                <div class="vendedor-info">
+                    <div class="nombre" th:text="${producto.vendedor.username}">vendedor</div>
+                    <div class="stats">
+                        ⭐ <span th:text="${#numbers.formatDecimal(producto.vendedor.calificacionPromedio, 1, 1)}">0.0</span>
+                        · <span th:text="${producto.vendedor.totalVentas}">0</span> ventas
+                        <span th:if="${producto.vendedor.ciudad != null}">
+                            · 📍 <span th:text="${producto.vendedor.ciudad}">Ciudad</span>
+                        </span>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- COMPRA PROTEGIDA -->
+        <div class="detail-section" th:if="${producto.compraProtegida}">
+            <h3>🛡️ Compra protegida con Bazarou</h3>
+            <p style="font-size: 14px;">Tu pago queda en custodia de Bazarou y solo se libera al vendedor cuando tú confirmas que recibiste el producto en buen estado. Si algo sale mal, te apoyamos para resolverlo o te devolvemos tu dinero.</p>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL DE REGATEO -->
+<div class="modal-overlay" id="modal-regateo" th:if="${producto.aceptaOfertas and !esPropio}">
+    <div class="modal">
+        <button class="modal-close">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+        <h2>¡Échate un regateo! 💬</h2>
+        <p class="modal-sub">Precio publicado: <strong>$<span th:text="${#numbers.formatDecimal(producto.precio, 0, 'COMMA', 2, 'POINT')}">0</span></strong> · El vendedor decide si acepta, rechaza o contraoferta.</p>
+
+        <form th:action="@{/ofertas/nueva}" method="post" sec:authorize="isAuthenticated()">
+            <input type="hidden" name="productoId" th:value="${producto.id}">
+
+            <p style="font-size: 13px; color: var(--gris); margin-bottom: 8px;">Sugerencias rápidas:</p>
+            <div class="regateo-sugerencias">
+                <button type="button" th:data-precio="${producto.precio}" data-desc="10">-10%</button>
+                <button type="button" th:data-precio="${producto.precio}" data-desc="15">-15%</button>
+                <button type="button" th:data-precio="${producto.precio}" data-desc="20">-20%</button>
+                <button type="button" th:data-precio="${producto.precio}" data-desc="25">-25%</button>
+            </div>
+
+            <div class="form-group">
+                <label>Tu oferta (MXN)</label>
+                <input type="number" id="monto-oferta" name="monto" step="0.01" min="0.01" required data-format="money" placeholder="Ej. 850.00">
+            </div>
+
+            <div class="form-group">
+                <label>Mensaje (opcional)</label>
+                <textarea name="mensaje" rows="3" placeholder="Hola, ¿aceptas este precio? ¡Saludos!"></textarea>
+            </div>
+
+            <button type="submit" class="btn-block">Enviar oferta</button>
+        </form>
+    </div>
+</div>
+
+<div th:replace="~{fragments/layout :: footer}"></div>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

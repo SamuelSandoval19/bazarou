@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{fragments/layout :: head-meta}"></th:block>
+    <title>Mis compras — Bazarou</title>
+</head>
+<body>
+
+<div th:replace="~{fragments/layout :: navbar}"></div>
+
+<div class="list-wrap">
+    <div class="list-header">
+        <h1>🛍️ Mis compras</h1>
+        <a href="/compra/mis-ventas" class="btn-secondary" style="padding:10px 18px; font-size:14px;">Ver mis ventas</a>
+    </div>
+
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <div th:if="${transacciones.empty}" class="empty-state">
+        <div class="emoji">🛒</div>
+        <h3>Aún no has comprado nada</h3>
+        <p>Cuando hagas tu primera compra, aparecerá aquí con su estado.</p>
+        <a href="/buscar" class="btn-primary" style="margin-top: 24px;">Explorar el bazar</a>
+    </div>
+
+    <div th:unless="${transacciones.empty}" style="background: var(--papel); border-radius: var(--radio); border: 1px solid var(--linea); overflow-x: auto;">
+        <table class="tabla-transacciones">
+            <thead>
+            <tr>
+                <th>Código</th>
+                <th>Producto</th>
+                <th>Vendedor</th>
+                <th>Total</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="t : ${transacciones}">
+                <td><code th:text="${t.codigoSeguimiento}">BZR-2025-XXX</code></td>
+                <td>
+                    <a th:href="@{|/producto/${t.producto.id}|}" style="font-weight: 500;" th:text="${t.producto.titulo}">Producto</a>
+                </td>
+                <td>@<span th:text="${t.vendedor.username}">vendedor</span></td>
+                <td>$<span th:text="${#numbers.formatDecimal(t.monto, 0, 'COMMA', 2, 'POINT')}">0</span></td>
+                <td>
+                    <span class="estado-badge" th:classappend="'estado-' + ${t.estado.name()}" th:text="${t.estado.name()}">--</span>
+                </td>
+                <td>
+                    <form th:if="${t.estado.name() == 'ENVIADO'}" th:action="@{|/compra/${t.id}/confirmar-recepcion|}" method="post">
+                        <button type="submit" class="btn-primary" style="padding: 6px 14px; font-size: 12px;">Confirmar recepción</button>
+                    </form>
+                    <form th:if="${t.estado.name() == 'ENVIADO' or t.estado.name() == 'ENTREGADO'}" th:action="@{|/compra/${t.id}/reportar|}" method="post" style="margin-top: 4px;">
+                        <button type="submit" class="btn-secondary" style="padding: 6px 14px; font-size: 12px;">Reportar problema</button>
+                    </form>
+                    <span th:if="${t.estado.name() == 'PAGO_RETENIDO'}" style="font-size: 12px; color: var(--gris);">Esperando envío</span>
+                    <span th:if="${t.estado.name() == 'COMPLETADO'}" style="font-size: 12px; color: var(--talavera);">¡Listo!</span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div th:replace="~{fragments/layout :: footer}"></div>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

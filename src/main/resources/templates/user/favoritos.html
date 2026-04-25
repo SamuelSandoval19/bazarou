@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{fragments/layout :: head-meta}"></th:block>
+    <title>Mis favoritos — Bazarou</title>
+</head>
+<body>
+
+<div th:replace="~{fragments/layout :: navbar}"></div>
+
+<div class="list-wrap">
+    <div class="list-header">
+        <h1>❤️ Mis favoritos</h1>
+    </div>
+
+    <div th:if="${favoritos.empty}" class="empty-state">
+        <div class="emoji">💔</div>
+        <h3>Aún no tienes favoritos</h3>
+        <p>Marca con el corazón los productos que te gusten para encontrarlos rápido.</p>
+        <a href="/buscar" class="btn-primary" style="margin-top: 24px;">Explorar el bazar</a>
+    </div>
+
+    <div th:unless="${favoritos.empty}" class="product-grid">
+        <article th:each="f : ${favoritos}" th:replace="~{products/list :: product-card(${f.producto}, false)}"></article>
+    </div>
+</div>
+
+<div th:replace="~{fragments/layout :: footer}"></div>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

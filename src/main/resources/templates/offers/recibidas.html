@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{fragments/layout :: head-meta}"></th:block>
+    <title>Ofertas recibidas — Bazarou</title>
+</head>
+<body>
+
+<div th:replace="~{fragments/layout :: navbar}"></div>
+
+<div class="list-wrap">
+    <div class="list-header">
+        <h1>💬 Ofertas recibidas</h1>
+        <a href="/ofertas/enviadas" class="btn-secondary" style="padding:10px 18px; font-size:14px;">Ver mis ofertas enviadas</a>
+    </div>
+
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <div th:if="${ofertas.empty}" class="empty-state">
+        <div class="emoji">📭</div>
+        <h3>Aún no recibes ofertas</h3>
+        <p>Cuando alguien quiera regatearte algún producto, las verás aquí.</p>
+    </div>
+
+    <div th:unless="${ofertas.empty}" style="display: flex; flex-direction: column; gap: 16px;">
+        <div th:each="o : ${ofertas}" style="background: var(--papel); border-radius: var(--radio); padding: 20px; border: 1px solid var(--linea); display: grid; grid-template-columns: 80px 1fr auto; gap: 20px; align-items: center;">
+
+            <a th:href="@{|/producto/${o.producto.id}|}">
+                <div style="width: 80px; height: 80px; border-radius: var(--radio-sm); overflow: hidden; background: var(--crema);">
+                    <img th:if="${!o.producto.imagenes.isEmpty()}" th:src="${o.producto.imagenes[0]}" alt="" style="width:100%; height:100%; object-fit:cover;">
+                </div>
+            </a>
+
+            <div>
+                <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 4px;">
+                    <a th:href="@{|/producto/${o.producto.id}|}" style="font-weight: 600; font-size: 16px;" th:text="${o.producto.titulo}">Producto</a>
+                    <span class="estado-badge" th:classappend="'estado-' + ${o.estado.name()}" th:text="${o.estado.name()}">PENDIENTE</span>
+                </div>
+                <div style="color: var(--gris); font-size: 14px;">
+                    <strong>@<span th:text="${o.comprador.username}">user</span></strong> ofrece
+                    <strong style="color: var(--rosa-mexicano); font-family: var(--display); font-size: 18px;">$<span th:text="${#numbers.formatDecimal(o.montoOfrecido, 0, 'COMMA', 2, 'POINT')}">0</span></strong>
+                    <span style="color: var(--gris);">(precio publicado: $<span th:text="${#numbers.formatDecimal(o.producto.precio, 0, 'COMMA', 2, 'POINT')}">0</span>)</span>
+                </div>
+                <p th:if="${o.mensaje != null and !o.mensaje.isEmpty()}"
+                   style="margin-top: 8px; padding: 10px 14px; background: var(--crema); border-radius: var(--radio-sm); font-size: 14px; font-style: italic;"
+                   th:text="'\"' + ${o.mensaje} + '\"'">Mensaje</p>
+                <div style="font-size: 12px; color: var(--gris); margin-top: 6px;" th:text="'Recibida: ' + ${#temporals.format(o.fechaOferta, 'dd MMM yyyy, HH:mm')}">Fecha</div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 8px;" th:if="${o.estado.name() == 'PENDIENTE'}">
+                <form th:action="@{|/ofertas/${o.id}/aceptar|}" method="post">
+                    <button type="submit" class="btn-primary" style="padding: 8px 16px; font-size: 13px; width: 100%;">✅ Aceptar</button>
+                </form>
+                <form th:action="@{|/ofertas/${o.id}/rechazar|}" method="post">
+                    <button type="submit" class="btn-secondary" style="padding: 8px 16px; font-size: 13px; width: 100%;">❌ Rechazar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/layout :: footer}"></div>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

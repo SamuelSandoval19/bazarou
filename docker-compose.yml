@@ -1,0 +1,46 @@
+version: "3.9"
+
+services:
+
+  # ---------- MySQL 8 ----------
+  mysql:
+    image: mysql:8.0
+    container_name: bazarou-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ""
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_DATABASE: bazarou
+    ports:
+      - "3307:3306"        # 3307 en el host para no chocar con XAMPP
+    volumes:
+      - bazarou-db:/var/lib/mysql
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  # ---------- App Spring Boot ----------
+  app:
+    build: .
+    container_name: bazarou-app
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      # Sobreescribe la conexión para apuntar al servicio mysql del compose
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/bazarou?useSSL=false&serverTimezone=America/Mexico_City&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ""
+      BAZAROU_UPLOADS_DIR: /app/uploads
+    ports:
+      - "8080:8080"
+    volumes:
+      - bazarou-uploads:/app/uploads
+
+volumes:
+  bazarou-db:
+  bazarou-uploads:

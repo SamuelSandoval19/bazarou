@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <th:block th:replace="~{fragments/layout :: head-meta}"></th:block>
+    <title th:text="'@' + ${perfil.username} + ' — Bazarou'">Perfil</title>
+</head>
+<body>
+
+<div th:replace="~{fragments/layout :: navbar}"></div>
+
+<section class="profile-header">
+    <div class="profile-header-inner">
+        <div class="profile-avatar-big" th:text="${#strings.toUpperCase(#strings.substring(perfil.username,0,1))}">B</div>
+        <div class="profile-info">
+            <h1 th:text="${perfil.nombreCompleto != null and !perfil.nombreCompleto.isEmpty()} ? ${perfil.nombreCompleto} : ${perfil.username}">Nombre</h1>
+            <div class="username">@<span th:text="${perfil.username}">user</span>
+                <span th:if="${perfil.ciudad != null}"> · 📍 <span th:text="${perfil.ciudad}">Ciudad</span></span>
+            </div>
+            <div class="profile-stats">
+                <div class="stat">
+                    <div class="num" th:text="${productos.size()}">0</div>
+                    <div>Publicaciones</div>
+                </div>
+                <div class="stat">
+                    <div class="num" th:text="${perfil.totalVentas}">0</div>
+                    <div>Ventas</div>
+                </div>
+                <div class="stat">
+                    <div class="num">⭐ <span th:text="${#numbers.formatDecimal(perfil.calificacionPromedio, 1, 1)}">0.0</span></div>
+                    <div>Calificación</div>
+                </div>
+            </div>
+            <p th:if="${perfil.bio != null and !perfil.bio.isEmpty()}" th:text="${perfil.bio}" style="margin-top: 12px; color: var(--tinta);">Bio</p>
+
+            <div style="margin-top: 16px;" th:if="${currentUser != null and currentUser.id == perfil.id}">
+                <a href="/perfil/editar" class="btn-secondary" style="padding: 8px 18px; font-size: 14px;">Editar perfil</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="section-header">
+        <h2>Lo que vende <em th:text="${perfil.username}">user</em></h2>
+    </div>
+
+    <div th:if="${productos.empty}" class="empty-state">
+        <div class="emoji">📭</div>
+        <h3>Sin publicaciones todavía</h3>
+        <p th:if="${currentUser != null and currentUser.id == perfil.id}">¡Anímate a poner tu primer producto!</p>
+    </div>
+
+    <div th:unless="${productos.empty}" class="product-grid">
+        <article th:each="p : ${productos}" th:replace="~{products/list :: product-card(${p}, false)}"></article>
+    </div>
+</section>
+
+<div th:replace="~{fragments/layout :: footer}"></div>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

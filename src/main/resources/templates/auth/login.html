@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{fragments/layout :: head-meta}"></th:block>
+    <title>Iniciar sesión — Bazarou</title>
+</head>
+<body>
+
+<div th:replace="~{fragments/layout :: navbar}"></div>
+
+<div class="auth-page">
+    <aside class="auth-side">
+        <h2>Bienvenido de<br>vuelta al <em>tianguis</em>.</h2>
+        <p>Encuentra de todo, regatea como Dios manda y compra con la seguridad de Bazarou.</p>
+        <span class="firma">— Pásele, marchanta.</span>
+    </aside>
+
+    <div class="auth-form-wrap">
+        <div class="auth-form">
+            <h1>Iniciar sesión</h1>
+            <p class="sub">¿Aún no tienes cuenta? <a href="/registro" style="color: var(--rosa-mexicano); font-weight: 600;">Únete gratis</a></p>
+
+            <div th:if="${param.error}" class="alert alert-error">
+                <span>⚠️</span><span>Usuario o contraseña incorrectos</span>
+            </div>
+            <div th:if="${param.logout}" class="alert alert-success">
+                <span>👋</span><span>Cerraste sesión correctamente. ¡Vuelve pronto!</span>
+            </div>
+            <div th:if="${success}" class="alert alert-success">
+                <span>✅</span><span th:text="${success}">Mensaje</span>
+            </div>
+
+            <form th:action="@{/login}" method="post">
+                <div class="form-group">
+                    <label>Usuario o correo</label>
+                    <input type="text" name="username" required autofocus placeholder="tu_usuario">
+                </div>
+
+                <div class="form-group">
+                    <label>Contraseña</label>
+                    <input type="password" name="password" required placeholder="••••••••">
+                </div>
+
+                <button type="submit" class="btn-block">Entrar</button>
+            </form>
+
+            <p class="auth-divider">¿Olvidaste tu contraseña? <a href="#">Recuperarla</a></p>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head><meta charset="UTF-8"><title>fragments</title></head>
+<body>
+
+<header th:fragment="navbar" class="navbar">
+    <div class="navbar-inner">
+        <a href="/" class="logo">
+            Baza<span class="logo-tilde">rou</span><span class="punto"></span>
+        </a>
+
+        <form action="/buscar" method="get" class="search-bar">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <input type="text" name="q" placeholder="Busca chamarras, libros, electrónicos..." th:value="${q}">
+        </form>
+
+        <nav class="nav-actions">
+            <a href="/favoritos" class="icon-link" sec:authorize="isAuthenticated()" title="Favoritos">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            </a>
+
+            <a href="/vender" class="btn-vender" sec:authorize="isAuthenticated()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <span>Publicar</span>
+            </a>
+
+            <div class="user-menu" sec:authorize="isAuthenticated()">
+                <button class="user-trigger" type="button">
+                    <span class="user-avatar" th:text="${currentUser != null ? #strings.toUpperCase(#strings.substring(currentUser.username,0,1)) : '?'}">B</span>
+                    <span style="font-size:14px; font-weight:500" th:text="${currentUser != null ? currentUser.username : ''}">user</span>
+                </button>
+                <div class="user-dropdown">
+                    <a th:href="@{|/perfil/${currentUser?.username}|}">Mi perfil</a>
+                    <a href="/perfil/editar">Editar perfil</a>
+                    <hr>
+                    <a href="/compra/mis-compras">Mis compras</a>
+                    <a href="/compra/mis-ventas">Mis ventas</a>
+                    <hr>
+                    <a href="/ofertas/recibidas">Ofertas recibidas</a>
+                    <a href="/ofertas/enviadas">Ofertas enviadas</a>
+                    <hr>
+                    <form th:action="@{/logout}" method="post">
+                        <button type="submit" style="color: var(--terracota);">Cerrar sesión</button>
+                    </form>
+                </div>
+            </div>
+
+            <a href="/login" class="btn-secondary" sec:authorize="!isAuthenticated()" style="padding:10px 18px; font-size:14px;">Iniciar sesión</a>
+            <a href="/registro" class="btn-vender" sec:authorize="!isAuthenticated()">Únete</a>
+        </nav>
+    </div>
+
+    <div class="cat-strip" th:if="${categorias != null}">
+        <div class="cat-strip-inner">
+            <a href="/buscar" class="cat-pill" th:classappend="${categoria == null ? 'active' : ''}">Todo</a>
+            <a th:each="c : ${categorias}"
+               th:href="@{|/categoria/${c.slug}|}"
+               class="cat-pill"
+               th:classappend="${categoria != null and categoria.id == c.id ? 'active' : ''}">
+                <span th:text="${c.emoji}">📦</span>&nbsp;<span th:text="${c.nombre}">Cat</span>
+            </a>
+        </div>
+    </div>
+</header>
+
+<footer th:fragment="footer" class="footer">
+    <div class="footer-inner">
+        <div class="footer-brand">
+            <div class="logo">Baza<span class="logo-tilde">rou</span><span class="punto"></span></div>
+            <p>El tianguis digital de México. Compra, vende y regatea con la seguridad de una plataforma moderna y la calidez del mercado de toda la vida.</p>
+        </div>
+        <div>
+            <h4>Bazarou</h4>
+            <ul>
+                <li><a href="/sobre-nosotros">Sobre nosotros</a></li>
+                <li><a href="/como-funciona">Cómo funciona</a></li>
+                <li><a href="#">Compra protegida</a></li>
+                <li><a href="#">Blog</a></li>
+            </ul>
+        </div>
+        <div>
+            <h4>Ayuda</h4>
+            <ul>
+                <li><a href="#">Centro de ayuda</a></li>
+                <li><a href="#">Reglas de la comunidad</a></li>
+                <li><a href="#">Reportar un problema</a></li>
+                <li><a href="#">Contacto</a></li>
+            </ul>
+        </div>
+        <div>
+            <h4>Legal</h4>
+            <ul>
+                <li><a href="#">Términos</a></li>
+                <li><a href="#">Privacidad</a></li>
+                <li><a href="#">Cookies</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>© 2025 Bazarou — Hecho con ❤️ desde México 🇲🇽</p>
+    </div>
+</footer>
+
+<th:block th:fragment="head-meta">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🌶️%3C/text%3E%3C/svg%3E">
+</th:block>
+
+<th:block th:fragment="scripts">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script th:src="@{/js/main.js}"></script>
+</th:block>
+
+<th:block th:fragment="alerts">
+    <div th:if="${success}" class="alert alert-success">
+        <span>✅</span><span th:text="${success}">Mensaje</span>
+    </div>
+    <div th:if="${error}" class="alert alert-error">
+        <span>⚠️</span><span th:text="${error}">Error</span>
+    </div>
+</th:block>
+
+</body>
+</html>

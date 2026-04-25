@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <th:block th:replace="~{fragments/layout :: head-meta}"></th:block>
+    <title>Bazarou — El tianguis digital de México</title>
+</head>
+<body>
+
+<div th:replace="~{fragments/layout :: navbar}"></div>
+
+<!-- HERO -->
+<section class="hero">
+    <div class="papel-picado"></div>
+    <div class="hero-inner">
+        <div>
+            <span class="hero-tagline">¡Échate un regateo, marchanta!</span>
+            <h1>El <em>tianguis</em><br>digital de <span class="underline">México</span>.</h1>
+            <p class="lead">Compra, vende y <strong>regatea</strong> de a deveras. Con compra protegida, envíos a todo el país y la onda del mercado de toda la vida — sin albures, sin fraudes.</p>
+            <div class="hero-cta">
+                <a href="/buscar" class="btn-primary">
+                    Explorar el bazar
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </a>
+                <a href="/vender" class="btn-secondary" sec:authorize="isAuthenticated()">Vende lo que ya no usas</a>
+                <a href="/registro" class="btn-secondary" sec:authorize="!isAuthenticated()">Crear cuenta gratis</a>
+            </div>
+        </div>
+
+        <div class="hero-collage">
+            <div class="collage-card collage-card-1">
+                <div class="ph">👕</div>
+                <span class="precio-tag">$249</span>
+            </div>
+            <div class="collage-card collage-card-2">
+                <div class="ph">📚</div>
+                <span class="precio-tag">$89</span>
+            </div>
+            <div class="collage-card collage-card-3">
+                <div class="ph">🎧</div>
+                <span class="precio-tag">$650</span>
+            </div>
+            <div class="collage-card collage-card-4">
+                <div class="ph">🪴</div>
+                <span class="precio-tag">$120</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CATEGORÍAS DESTACADAS -->
+<section class="section">
+    <div class="section-header">
+        <h2>Date una <em>vuelta</em> por los puestos</h2>
+    </div>
+    <div class="cat-grid">
+        <a th:each="c : ${categorias}" th:href="@{|/categoria/${c.slug}|}" class="cat-card">
+            <span class="emoji" th:text="${c.emoji}">🛍️</span>
+            <span class="nombre" th:text="${c.nombre}">Categoría</span>
+        </a>
+    </div>
+</section>
+
+<!-- RECIENTES -->
+<section class="section" style="padding-top: 0;">
+    <div class="section-header">
+        <h2>Lo que <em>acaba de llegar</em></h2>
+        <a href="/buscar" class="ver-mas">Ver todo →</a>
+    </div>
+
+    <div th:if="${recientes.empty}" class="empty-state">
+        <div class="emoji">🛒</div>
+        <h3>Aún no hay productos</h3>
+        <p>¡Sé el primero en publicar algo en Bazarou!</p>
+        <a href="/vender" class="btn-primary" style="margin-top: 24px;" sec:authorize="isAuthenticated()">Publicar producto</a>
+        <a href="/registro" class="btn-primary" style="margin-top: 24px;" sec:authorize="!isAuthenticated()">Crear cuenta</a>
+    </div>
+
+    <div th:unless="${recientes.empty}" class="product-grid">
+        <article th:each="p : ${recientes}" th:replace="~{products/list :: product-card(${p}, false)}"></article>
+    </div>
+</section>
+
+<!-- BENEFICIOS -->
+<section class="beneficios">
+    <div class="beneficios-inner">
+        <div class="beneficio">
+            <div class="beneficio-icon">🛡️</div>
+            <div>
+                <h3>Compra protegida</h3>
+                <p>Tu dinero queda en custodia hasta que confirmas que recibiste lo que compraste. Sin sustos.</p>
+            </div>
+        </div>
+        <div class="beneficio">
+            <div class="beneficio-icon">💬</div>
+            <div>
+                <h3>Regatea como en el tianguis</h3>
+                <p>Haz tu oferta, contraoferta, llégale al precio justo. Es parte del juego.</p>
+            </div>
+        </div>
+        <div class="beneficio">
+            <div class="beneficio-icon">📦</div>
+            <div>
+                <h3>Envíos a toda la república</h3>
+                <p>Desde Tijuana hasta Mérida, con paqueterías de confianza y guía de seguimiento.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div th:replace="~{fragments/layout :: footer}"></div>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

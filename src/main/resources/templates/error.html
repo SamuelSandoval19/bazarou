@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{fragments/layout :: head-meta}"></th:block>
+    <title>Algo salió mal — Bazarou</title>
+</head>
+<body>
+
+<div th:replace="~{fragments/layout :: navbar}"></div>
+
+<div class="empty-state" style="padding: 120px 24px;">
+    <div class="emoji">🌶️</div>
+    <h3 th:if="${status == 404}">Esta página no existe</h3>
+    <h3 th:unless="${status == 404}">Algo salió mal en el bazar</h3>
+    <p th:if="${status != null}">Error <span th:text="${status}">--</span> · <span th:text="${error}">--</span></p>
+    <p th:if="${message != null and !message.isEmpty()}" th:text="${message}">--</p>
+    <a href="/" class="btn-primary" style="margin-top: 24px;">Volver al inicio</a>
+</div>
+
+<div th:replace="~{fragments/layout :: footer}"></div>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

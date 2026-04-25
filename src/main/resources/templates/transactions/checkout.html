@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{fragments/layout :: head-meta}"></th:block>
+    <title>Confirmar compra — Bazarou</title>
+</head>
+<body>
+
+<div th:replace="~{fragments/layout :: navbar}"></div>
+
+<div class="publish-wrap" style="max-width: 980px;">
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <div style="display: grid; grid-template-columns: 1.4fr 1fr; gap: 24px;">
+
+        <!-- IZQUIERDA: formulario -->
+        <div class="publish-card">
+            <h1>Compra <em>protegida</em> 🛡️</h1>
+            <p class="lead">Tu pago queda en custodia de Bazarou hasta que confirmes la entrega.</p>
+
+            <form th:action="@{/compra/confirmar}" method="post">
+                <input type="hidden" name="productoId" th:value="${producto.id}">
+                <input type="hidden" name="monto" th:value="${producto.precio}">
+                <input type="hidden" name="costoEnvio" th:value="${costoEnvio}">
+
+                <h3 style="font-family: var(--display); margin: 24px 0 12px; font-size: 18px;">📍 Dirección de envío</h3>
+
+                <div class="form-group">
+                    <label>Dirección completa *</label>
+                    <textarea name="direccion" required rows="3"
+                              placeholder="Calle y número, colonia, código postal, ciudad, estado, referencias..."></textarea>
+                </div>
+
+                <h3 style="font-family: var(--display); margin: 24px 0 12px; font-size: 18px;">💳 Método de pago</h3>
+
+                <div class="toggle-row" style="cursor:pointer; border: 2px solid var(--rosa-mexicano);">
+                    <div class="info">
+                        <div class="title">Tarjeta · OXXO Pay · Transferencia</div>
+                        <div class="sub">Pago simulado para esta versión de demo.</div>
+                    </div>
+                    <span style="font-size: 24px;">💳</span>
+                </div>
+
+                <button type="submit" class="btn-block" style="margin-top: 24px;">
+                    Confirmar compra protegida
+                </button>
+
+                <p style="font-size: 12px; color: var(--gris); text-align: center; margin-top: 12px;">
+                    Al confirmar aceptas los términos de Compra Protegida de Bazarou.
+                </p>
+            </form>
+        </div>
+
+        <!-- DERECHA: resumen -->
+        <div>
+            <div style="background: var(--papel); border: 1px solid var(--linea); border-radius: var(--radio); padding: 24px; position: sticky; top: 90px;">
+                <h3 style="font-family: var(--display); font-size: 18px; margin-bottom: 16px;">Resumen</h3>
+
+                <div style="display: flex; gap: 12px; align-items: center; padding-bottom: 16px; border-bottom: 1px dashed var(--linea);">
+                    <div style="width: 64px; height: 64px; border-radius: var(--radio-sm); overflow: hidden; background: var(--crema); flex-shrink: 0;">
+                        <img th:if="${!producto.imagenes.isEmpty()}" th:src="${producto.imagenes[0]}" style="width:100%; height:100%; object-fit:cover;">
+                    </div>
+                    <div>
+                        <div style="font-weight: 600; font-size: 14px;" th:text="${producto.titulo}">Producto</div>
+                        <div style="color: var(--gris); font-size: 12px;">@<span th:text="${producto.vendedor.username}">vendedor</span></div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 16px; display: flex; flex-direction: column; gap: 8px; font-size: 14px;">
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--gris);">Producto</span>
+                        <span>$<span th:text="${#numbers.formatDecimal(producto.precio, 0, 'COMMA', 2, 'POINT')}">0</span></span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--gris);">Envío estimado</span>
+                        <span>$<span th:text="${#numbers.formatDecimal(costoEnvio, 0, 'COMMA', 2, 'POINT')}">0</span></span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--gris);">Comisión Bazarou (5%)</span>
+                        <span>$<span th:text="${#numbers.formatDecimal(comision, 0, 'COMMA', 2, 'POINT')}">0</span></span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding-top: 12px; margin-top: 4px; border-top: 1px solid var(--linea); font-size: 18px; font-weight: 700;">
+                        <span>Total</span>
+                        <span style="font-family: var(--display);">$<span th:text="${#numbers.formatDecimal(producto.precio.add(costoEnvio).add(comision), 0, 'COMMA', 2, 'POINT')}">0</span></span>
+                    </div>
+                </div>
+
+                <div style="margin-top: 24px; padding: 14px; background: var(--talavera-soft); border-radius: var(--radio-sm); font-size: 13px;">
+                    <strong style="color: var(--talavera);">🛡️ Tu compra está protegida.</strong>
+                    <p style="margin-top: 6px; color: var(--carbon);">Si el producto no llega o no es como se describe, te ayudamos o te devolvemos el dinero.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/layout :: footer}"></div>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

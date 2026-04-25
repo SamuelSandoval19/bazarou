@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{fragments/layout :: head-meta}"></th:block>
+    <title>Sobre Bazarou</title>
+</head>
+<body>
+
+<div th:replace="~{fragments/layout :: navbar}"></div>
+
+<section class="hero">
+    <div class="papel-picado"></div>
+    <div class="hero-inner" style="grid-template-columns: 1fr; text-align: center;">
+        <div>
+            <span class="hero-tagline">Hecho en México 🇲🇽</span>
+            <h1>Somos <em>Bazarou</em>.</h1>
+            <p class="lead" style="margin: 24px auto 0;">El tianguis digital donde la confianza, el regateo y la economía circular se dan la mano.</p>
+        </div>
+    </div>
+</section>
+
+<section class="section" style="max-width: 760px;">
+    <p style="font-family: var(--display); font-size: 22px; line-height: 1.5; color: var(--tinta);">
+        En México siempre hemos sabido comprar y vender de manera diferente:
+        nos miramos a los ojos, regateamos, llegamos a un acuerdo. <strong>Bazarou nace para llevar
+        ese ritual al mundo digital</strong> — sin perder la calidez del tianguis, pero con la
+        seguridad que merece tu dinero.
+    </p>
+
+    <p style="margin-top: 24px; font-size: 17px; line-height: 1.7;">
+        Si vendes algo que ya no usas, ayudas al planeta y te haces de un dinerito.
+        Si compras de segunda mano, encuentras chuladas únicas a precios justos.
+        Y si sabes regatear (o quieres aprender), aquí es tu casa.
+    </p>
+
+    <p style="margin-top: 24px; font-size: 17px; line-height: 1.7;">
+        <strong>Nuestra promesa:</strong> compra protegida en cada transacción, envíos
+        rastreables a toda la república, y una comunidad que se cuida entre sí.
+        Lo demás —los chistes, los emojis, el pan dulce de fondo mientras navegas—
+        viene de regalo.
+    </p>
+
+    <div style="margin-top: 48px; padding: 32px; background: var(--rosa-mexicano-soft); border-radius: var(--radio); text-align: center;">
+        <p class="hero-tagline" style="display: block; transform: none;">¿Listo para echarle un ojo al bazar?</p>
+        <a href="/buscar" class="btn-primary" style="margin-top: 16px;">Pásale, marchanta →</a>
+    </div>
+</section>
+
+<div th:replace="~{fragments/layout :: footer}"></div>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>
